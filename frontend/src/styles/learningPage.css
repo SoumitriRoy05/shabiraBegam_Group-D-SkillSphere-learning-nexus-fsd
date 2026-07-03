@@ -1,0 +1,132 @@
+.learningHero{
+    min-height:100vh;
+    background:#07070d;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:120px 8%;
+    position:relative;
+    overflow:hidden;
+}
+
+.learningGlow{
+    position:absolute;
+    width:350px;
+    height:350px;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:.25;
+}
+
+.glow1{
+    background:#7b2cff;
+    top:80px;
+    left:-120px;
+}
+
+.glow2{
+    background:#00d4ff;
+    right:-120px;
+    bottom:-50px;
+}
+
+.learningLeft{
+    width:50%;
+    z-index:2;
+}
+
+.learningBadge{
+    display:inline-block;
+    padding:10px 18px;
+    border:1px solid gold;
+    border-radius:30px;
+    color:gold;
+    margin-bottom:30px;
+}
+
+.learningLeft h1{
+    font-size:72px;
+    line-height:1.1;
+    margin-bottom:25px;
+}
+
+.learningLeft span{
+    background:linear-gradient(90deg,#00d4ff,#8b5cf6,#d946ef);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.learningLeft p{
+    color:#bdbdbd;
+    max-width:620px;
+    font-size:20px;
+    line-height:1.7;
+}
+
+.learningButtons{
+    margin-top:40px;
+    display:flex;
+    gap:20px;
+}
+
+.primaryBtn{
+    padding:16px 40px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    font-size:18px;
+    color:white;
+    background:linear-gradient(90deg,#00d4ff,#8b5cf6);
+}
+
+
+
+.learningRight{
+    width:35%;
+    display:flex;
+    justify-content:center;
+}
+
+.learningCard{
+    width:360px;
+    background:#11111a;
+    border:1px solid #00d4ff33;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 0 40px rgba(0,212,255,.15);
+}
+
+.learningCard h3{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.cardRow{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin:22px 0;
+    font-size:18px;
+}
+
+.cardRow svg{
+    color:#00d4ff;
+    font-size:22px;
+}
+
+.unlockBtn{
+    margin-top:35px;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    background:linear-gradient(90deg,#00d4ff,#8b5cf6);
+    color:white;
+    font-size:17px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+}

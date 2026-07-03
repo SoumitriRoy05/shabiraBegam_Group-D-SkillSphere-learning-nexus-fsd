@@ -13,7 +13,7 @@ export default function CTA() {
 
       <div className="ctaButtons">
         <button className="ctaBtn">Get Started</button>
-        <button className="demoBtn">Book Demo</button>
+
       </div>
 
     </section>

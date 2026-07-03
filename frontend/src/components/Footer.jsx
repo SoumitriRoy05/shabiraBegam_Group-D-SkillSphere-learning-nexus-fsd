@@ -1,4 +1,5 @@
 import "../styles/footer.css";
+import { Link } from "react-router-dom";
 import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
 
 export default function Footer() {
@@ -18,10 +19,15 @@ export default function Footer() {
         <div className="footerLinks">
           <h3>Quick Links</h3>
 
-          <a href="#">Home</a>
-          <a href="#">Features</a>
-          <a href="#">Dashboard</a>
-          <a href="#">Contact</a>
+          <Link to="/">Home</Link>
+
+          <Link to="/features">Features</Link>
+
+          <Link to="/learning">Learning</Link>
+
+          <Link to="/workforce">Workforce</Link>
+
+          <Link to="/contact">Contact</Link>
         </div>
 
         <div className="footerContact">

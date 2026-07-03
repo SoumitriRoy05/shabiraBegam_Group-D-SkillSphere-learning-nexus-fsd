@@ -123,9 +123,9 @@ return(
 
 <UserSelection/>
 
-<Features/>
+{/* <Features/> */}
 
-<Workforce/>
+{/* <Workforce/> */}
 
 <Stats/>
 
