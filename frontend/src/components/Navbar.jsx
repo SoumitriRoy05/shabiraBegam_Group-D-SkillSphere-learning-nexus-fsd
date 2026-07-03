@@ -1,5 +1,5 @@
 import "../styles/navbar.css";
-
+import { Link, useLocation } from "react-router-dom";
 export default function Navbar() {
   return (
     <header className="navbar">
@@ -16,17 +16,21 @@ export default function Navbar() {
       </div>
 
       <nav className="navLinks">
+          {location.pathname !== "/" }
+        <Link to="/" className="backHome">
+         Home
+        </Link>
+{/*         <a href="#">Features</a> */}
+        <Link to="/features">Features</Link>
 
-        <a href="#">Features</a>
+{/*         <a href="#">Learning</a> */}
+        <Link to="/learning">Learning</Link>
+{/*         <a href="#">Workforce</a> */}
+        <Link to="/workforce">Workforce</Link>
+{/*         <a href="#">Pricing</a> */}
 
-        <a href="#">Learning</a>
-
-        <a href="#">Workforce</a>
-
-        <a href="#">Pricing</a>
-
-        <a href="#">Contact</a>
-
+{/*         <a href="#">Contact</a> */}
+<Link to="/contact">Contact</Link>
       </nav>
 
       <div className="navButtons">

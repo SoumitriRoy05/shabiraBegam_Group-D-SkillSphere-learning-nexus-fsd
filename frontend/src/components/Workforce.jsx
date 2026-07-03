@@ -1,4 +1,4 @@
-import "../styles/workforce.css";
+import "../styles/workforcePage.css";
 
 export default function Workforce(){
 

@@ -157,3 +157,17 @@ display:none;
 }
 
 }
+.backHome {
+    color: #00E5FF;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.backHome:hover {
+    color: white;
+    text-shadow: 0 0 10px #00E5FF;
+}
