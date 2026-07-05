@@ -1,0 +1,287 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:60px 20px;
+
+    background:
+        radial-gradient(circle at top left,#37206b 0%,transparent 35%),
+        radial-gradient(circle at bottom right,#55126e 0%,transparent 35%),
+        #080811;
+
+    overflow-x:hidden;
+}
+
+/* Center Container */
+
+.container{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* Login Card */
+
+.login-card{
+    width:430px;
+    max-width:100%;
+    padding:45px;
+
+    background:rgba(18,18,28,.88);
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:22px;
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.55),
+        0 0 35px rgba(124,58,237,.18);
+
+    transition:.35s;
+}
+
+.login-card:hover{
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.65),
+        0 0 45px rgba(124,58,237,.3);
+}
+
+/* Heading */
+
+.login-card h1{
+    text-align:center;
+    color:#fff;
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#9f9f9f;
+    font-size:16px;
+    margin-bottom:35px;
+}
+
+/* Login Content */
+
+.login-content{
+    width:100%;
+}
+
+/* Input Group */
+
+.input-group{
+    margin-bottom:20px;
+}
+
+.input-group label{
+    display:block;
+    color:#d6d6d6;
+    margin-bottom:8px;
+    font-size:15px;
+    font-weight:500;
+}
+
+.input-group input{
+    width:100%;
+    padding:15px 18px;
+
+    background:#15151f;
+
+    border:1px solid #2e2e3b;
+    border-radius:14px;
+
+    color:white;
+    font-size:15px;
+
+    outline:none;
+    transition:.3s;
+}
+
+.input-group input::placeholder{
+    color:#888;
+}
+
+.input-group input:focus{
+    border-color:#8b5cf6;
+    box-shadow:
+        0 0 0 3px rgba(139,92,246,.15),
+        0 0 15px rgba(139,92,246,.3);
+}
+
+
+
+.options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:18px 0 25px;
+}
+
+.remember{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#c3c3c3;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.remember input{
+    accent-color:#8b5cf6;
+}
+
+.options a{
+    color:#ffc93c;
+    text-decoration:none;
+    font-size:14px;
+}
+
+.options a:hover{
+    color:#ffe27a;
+}
+
+/* Login Button */
+
+.login-btn{
+    width:100%;
+    padding:15px;
+
+    border:none;
+    border-radius:14px;
+
+    /*background:linear-gradient(90deg,#5b4bff,#8b3dff);*/
+    
+    background:linear-gradient(90deg,#00e5ff,#8a2be2);
+
+    color:white;
+    font-size:18px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    box-shadow:0 10px 25px rgba(124,58,237,.45);
+}
+
+.login-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 12px 30px rgba(0,229,255,.45),
+        0 0 20px rgba(138,43,226,.4);
+}
+
+/* Divider */
+
+.divider{
+    position:relative;
+    text-align:center;
+    margin:30px 0;
+    color:#9b9b9b;
+    font-size:14px;
+}
+
+.divider::before,
+.divider::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:35%;
+    height:1px;
+    background:#343444;
+}
+
+.divider::before{
+    left:0;
+}
+
+.divider::after{
+    right:0;
+}
+
+/* Google Button */
+
+.google-btn{
+    width:100%;
+    height:52px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+
+    background:#111118;
+
+    border:1px solid #2f2f3d;
+    border-radius:14px;
+
+    color:white;
+    font-size:16px;
+    font-weight:600;
+
+    cursor:pointer;
+    transition:.3s;
+}
+
+.google-btn img{
+    width:22px;
+    height:22px;
+}
+
+.google-btn:hover{
+    background:#181822;
+    border-color:#56566d;
+}
+
+/* Bottom Text */
+
+.signup-text{
+    margin-top:28px;
+    text-align:center;
+    color:#bdbdbd;
+    font-size:15px;
+}
+
+.signup-text a{
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.signup-text a:hover{
+    color:#8b5cf6;
+}
+
+/* Responsive */
+
+@media(max-width:480px){
+
+    body{
+        padding:30px 15px;
+    }
+
+    .login-card{
+        width:100%;
+        padding:30px;
+    }
+
+    .login-card h1{
+        font-size:32px;
+    }
+
+    .subtitle{
+        font-size:14px;
+    }
+}
