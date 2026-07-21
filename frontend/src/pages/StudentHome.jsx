@@ -155,6 +155,60 @@ export default function StudentHome() {
               </div>
             </div>
 
+            {/* Trending & New Courses Showcase */}
+            <div className="sh-panel" style={{ marginTop: '25px' }}>
+              <div className="sh-panel-header">
+                <h3 className="sh-panel-title">Explore <span>Trending & New Courses</span></h3>
+                <button className="sh-feed-btn" onClick={() => navigate('/courses')} style={{ background: 'transparent', border: '1px solid #00e5ff', color: '#00e5ff', padding: '8px 16px' }}>
+                  View All 12 Courses ↗
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '18px', marginTop: '15px' }}>
+                {[
+                  { id: 1, title: "Frontend System Design", badge: "Premium", track: "react", desc: "Master large-scale application architecture and frontend performance optimization." },
+                  { id: 4, title: "Data Structures & Algorithms (DSA)", badge: "FAANG Prep", track: "java", desc: "bootcamp: Arrays, Trees, Dynamic Programming, and Graph algorithms." },
+                  { id: 5, title: "Generative AI Engineering", badge: "New Track", track: "react", desc: "Build LLM applications, RAG pipelines, and integrate AI into software." },
+                  { id: 7, title: "Advanced Node.js & Microservices", badge: "Popular", track: "springboot", desc: "Scale backend systems with Docker, Kubernetes, and event-driven microservices." }
+                ].map(c => (
+                  <div key={c.id} style={{
+                    background: 'rgba(15, 23, 42, 0.7)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '14px',
+                    padding: '18px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justify: 'space-between',
+                    transition: 'transform 0.2s'
+                  }}>
+                    <div>
+                      <span style={{ fontSize: '11px', fontWeight: '700', background: 'rgba(0, 229, 255, 0.15)', color: '#00e5ff', padding: '3px 8px', borderRadius: '10px' }}>
+                        {c.badge}
+                      </span>
+                      <h4 style={{ color: '#ffffff', margin: '10px 0 6px 0', fontSize: '16px' }}>{c.title}</h4>
+                      <p style={{ color: '#94a3b8', fontSize: '13px', lineHeight: '1.4', margin: 0 }}>{c.desc}</p>
+                    </div>
+                    <button 
+                      onClick={() => navigate(`/learning?track=${c.track}`)}
+                      style={{
+                        marginTop: '15px',
+                        background: 'linear-gradient(90deg, #00e5ff, #8a2be2)',
+                        color: '#ffffff',
+                        border: 'none',
+                        padding: '8px 14px',
+                        borderRadius: '20px',
+                        fontWeight: '600',
+                        fontSize: '13px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Explore Course ↗
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
           {/* Sidebar Column */}

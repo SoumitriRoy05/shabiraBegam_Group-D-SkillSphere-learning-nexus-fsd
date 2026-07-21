@@ -17,6 +17,8 @@ import StudentFeatures from "./pages/StudentFeatures";
 import WorkforceFeatures from "./pages/WorkforceFeatures";
 import SandboxPage from "./pages/SandboxPage";
 import CoursesPage from "./pages/CoursesPage";
+import CertificatesPage from "./pages/CertificatesPage";
+import DiscussionsPage from "./pages/DiscussionsPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 import FloatingChatbot from "./components/FloatingChatbot";
 
@@ -71,9 +73,9 @@ function App() {
         <Route path="/student-features" element={<ProtectedRoute><StudentFeatures /></ProtectedRoute>} />
         <Route path="/workforce-features" element={<ProtectedRoute><WorkforceFeatures /></ProtectedRoute>} />
         <Route path="/sandbox" element={<ProtectedRoute><SandboxPage /></ProtectedRoute>} />
-        <Route path="/discussions" element={<ProtectedRoute><ComingSoonPage title="Discussions" /></ProtectedRoute>} />
+        <Route path="/discussions" element={<ProtectedRoute><DiscussionsPage /></ProtectedRoute>} />
         <Route path="/resources" element={<ProtectedRoute><ComingSoonPage title="Resources" /></ProtectedRoute>} />
-        <Route path="/certificate" element={<ProtectedRoute><ComingSoonPage title="Certificate" /></ProtectedRoute>} />
+        <Route path="/certificate" element={<ProtectedRoute><CertificatesPage /></ProtectedRoute>} />
       </Routes>
       {!isDashboardRoute && <FloatingChatbot />}
     </>

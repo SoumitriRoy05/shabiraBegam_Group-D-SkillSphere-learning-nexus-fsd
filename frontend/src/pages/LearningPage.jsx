@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -9,12 +9,33 @@ import "../styles/learningPage.css";
 export default function LearningPage() {
   const { user, completedTopics, completeTopic, earnXp } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Active track selection
-  const [activeTrack, setActiveTrack] = useState("react"); // "react", "java", "springboot"
+  const queryParams = new URLSearchParams(location.search);
+  const trackFromUrl = queryParams.get('track') || location.state?.track;
+  const validTracks = ["fsd", "react", "javascript", "dsa", "java", "genai", "ml", "node", "springboot", "nextjs", "web3", "aws", "python", "uiux"];
+
+  const [activeTrack, setActiveTrack] = useState(
+    trackFromUrl && validTracks.includes(trackFromUrl) ? trackFromUrl : "react"
+  );
   
-  // Selected topic ID within track ("react_intro", ..., or "quiz")
-  const [activeTopicId, setActiveTopicId] = useState("react_intro");
+  // Selected topic ID within track
+  const [activeTopicId, setActiveTopicId] = useState(() => {
+    const t = (trackFromUrl && validTracks.includes(trackFromUrl)) ? trackFromUrl : "react";
+    if (t === "java") return "java_intro";
+    if (t === "springboot") return "springboot_intro";
+    return `${t}_intro`;
+  });
+
+  // Sync active track when URL query parameter changes
+  useEffect(() => {
+    if (trackFromUrl && validTracks.includes(trackFromUrl)) {
+      setActiveTrack(trackFromUrl);
+      if (trackFromUrl === "java") setActiveTopicId("java_intro");
+      else if (trackFromUrl === "springboot") setActiveTopicId("springboot_intro");
+      else setActiveTopicId(`${trackFromUrl}_intro`);
+    }
+  }, [trackFromUrl]);
 
   // Quiz state
   const [quizAnswers, setQuizAnswers] = useState({});
@@ -22,8 +43,192 @@ export default function LearningPage() {
   const [quizScore, setQuizScore] = useState(0);
   const [badgeUnlocked, setBadgeUnlocked] = useState(false);
 
-  // Track configurations
+  // Video Player state
+  const [isPlayingVideo, setIsPlayingVideo] = useState(false);
+
+  useEffect(() => {
+    setIsPlayingVideo(false);
+  }, [activeTrack, activeTopicId]);
+
+  // Track configurations for all 12 platform courses
   const tracks = {
+    fsd: {
+      name: "Frontend System Design",
+      class: "react",
+      instructor: "Alexis Mangin",
+      badgeName: "Frontend Architect Badge",
+      badgeKey: "fsd_badge",
+      topics: [
+        { id: "fsd_intro", title: "1. Architecture & Scalability", videoId: "S5-nF8m_6y0", videoTitle: "Frontend System Design - Chapter 1: Architecture & Scalability", xp: 100, content: <div><p>Frontend System Design focuses on designing scalable, resilient, and maintainable web applications.</p></div> },
+        { id: "fsd_cdn", title: "2. CDN & Asset Caching", videoId: "bMknfKXIFA8", videoTitle: "Frontend System Design - Chapter 2: Asset Delivery & Edge Caching", xp: 100, content: <div><p>CDNs distribute content globally closer to users, reducing latency and bandwidth overhead.</p></div> },
+        { id: "fsd_state", title: "3. State Management & Event Bus", videoId: "SqcY0GlETPk", videoTitle: "Frontend System Design - Chapter 3: State Normalization & Bus Architecture", xp: 150, content: <div><p>Managing global vs local state cleanly prevents memory leaks and unnecessary component re-renders.</p></div> },
+        { id: "fsd_micro", title: "4. Micro-Frontends & Module Federation", videoId: "0riHps91AzE", videoTitle: "Frontend System Design - Chapter 4: Micro-Frontends", xp: 150, content: <div><p>Micro-frontends allow multiple teams to independently build, test, and deploy UI features.</p></div> },
+        { id: "fsd_perf", title: "5. Web Vitals & Performance Monitoring", videoId: "LDB4uaJ87e0", videoTitle: "Frontend System Design - Chapter 5: Core Web Vitals & Optimization", xp: 200, content: <div><p>Measuring LCP, FID, and CLS ensures optimal user experience across network conditions.</p></div> },
+        { id: "fsd_net", title: "6. Network Protocols & WebSockets", videoId: "TNhaISOUy6Q", videoTitle: "Frontend System Design - Chapter 6: Realtime Protocols & WebSockets", xp: 200, content: <div><p>Bi-directional real-time communication using WebSockets and HTTP/3 streaming.</p></div> }
+      ],
+      quiz: [{ q: "What is the primary goal of Frontend System Design?", options: ["Designing database tables.", "Building scalable, high-performance web applications.", "Configuring Linux servers.", "Designing logos."], correct: 1 }]
+    },
+    javascript: {
+      name: "JavaScript",
+      class: "react",
+      instructor: "Akshay Saini",
+      badgeName: "JavaScript Ninja Badge",
+      badgeKey: "js_badge",
+      topics: [
+        { id: "javascript_intro", title: "1. JS Execution Context & Engine", videoId: "hdI2bqOjy3c", videoTitle: "JavaScript - Chapter 1: Execution Context & Memory Allocation", xp: 100, content: <div><p>JavaScript executes inside an Execution Context containing a Memory Component and a Code Execution Component.</p></div> },
+        { id: "javascript_closures", title: "2. Closures & Scope Chain", videoId: "PkZNo7MFNFg", videoTitle: "JavaScript - Chapter 2: Closures, Lexical Scope & Lexical Environment", xp: 150, content: <div><p>A closure gives a function access to its outer scope even after the outer function has closed.</p></div> },
+        { id: "javascript_async", title: "3. Event Loop & Asynchronous JS", videoId: "8zKuNo4ay8E", videoTitle: "JavaScript - Chapter 3: Event Loop, Microtask Queue & Call Stack", xp: 150, content: <div><p>The event loop monitors the call stack and microtask queue to execute async callbacks seamlessly.</p></div> },
+        { id: "javascript_promises", title: "4. Promises & Async/Await", videoId: "DHvZLI7aU3c", videoTitle: "JavaScript - Chapter 4: Promises, Async/Await & Error Handling", xp: 200, content: <div><p>Promises handle asynchronous operations with resolved or rejected states.</p></div> },
+        { id: "javascript_proto", title: "5. Prototypes & OOP Inheritance", videoId: "1g4zP3bS5tM", videoTitle: "JavaScript - Chapter 5: Prototype Chain & Inherited Methods", xp: 200, content: <div><p>JavaScript uses prototype-based inheritance where objects inherit properties from prototype objects.</p></div> },
+        { id: "javascript_es6", title: "6. ES6+ Array Methods & Map/Set", videoId: "NCwa_xi0Uuc", videoTitle: "JavaScript - Chapter 6: ES6 Array Methods & Map/Set Collections", xp: 200, content: <div><p>Modern ES6 features including map, filter, reduce, destructuring, and Map/Set collections.</p></div> }
+      ],
+      quiz: [{ q: "What is a closure in JavaScript?", options: ["Function with references to outer scope", "Window close", "Loop", "Database"], correct: 0 }]
+    },
+    genai: {
+      name: "Generative AI Engineering",
+      class: "react",
+      instructor: "Andrew Ng",
+      badgeName: "AI Engineer Badge",
+      badgeKey: "genai_badge",
+      topics: [
+        { id: "genai_intro", title: "1. LLM Architecture & Prompting", videoId: "mEsleV16qdo", videoTitle: "Generative AI - Chapter 1: Transformer Models & Prompt Tuning", xp: 150, content: <div><p>Generative AI leverages transformer models (like GPT) to process natural language using self-attention mechanisms.</p></div> },
+        { id: "genai_rag", title: "2. RAG Pipelines & Vector DBs", videoId: "mEsleV16qdo", videoTitle: "Generative AI - Chapter 2: Retrieval Augmented Generation & Embeddings", xp: 150, content: <div><p>Retrieval-Augmented Generation connects LLMs to custom knowledge bases using vector embeddings.</p></div> },
+        { id: "genai_langchain", title: "3. LangChain & LlamaIndex Agents", videoId: "mEsleV16qdo", videoTitle: "Generative AI - Chapter 3: Autonomous AI Agents & Tool Calling", xp: 200, content: <div><p>Building autonomous AI agents using LangChain to chain tools, APIs, and memory stores together.</p></div> },
+        { id: "genai_finetune", title: "4. Fine-Tuning & Quantization", videoId: "mEsleV16qdo", videoTitle: "Generative AI - Chapter 4: Model Fine-Tuning & LoRA Quantization", xp: 200, content: <div><p>Fine-tuning open-source LLMs like Llama using LoRA and QLoRA techniques.</p></div> },
+        { id: "genai_multimodal", title: "5. Multimodal AI Models", videoId: "mEsleV16qdo", videoTitle: "Generative AI - Chapter 5: Vision & Multimodal Embeddings", xp: 200, content: <div><p>Integrating vision, speech, and text into unified multimodal AI pipelines.</p></div> },
+        { id: "genai_deploy", title: "6. AI Guardrails & Deployment", videoId: "mEsleV16qdo", videoTitle: "Generative AI - Chapter 6: Production AI Guardrails & Safety", xp: 250, content: <div><p>Deploying LLMs in production with hallucination detection and safety guardrails.</p></div> }
+      ],
+      quiz: [{ q: "What powers modern LLMs?", options: ["Transformers", "SQL", "HTML", "C++"], correct: 0 }]
+    },
+    ml: {
+      name: "Machine Learning Foundations",
+      class: "java",
+      instructor: "Andrew Ng",
+      badgeName: "ML Specialist Badge",
+      badgeKey: "ml_badge",
+      topics: [
+        { id: "ml_intro", title: "1. Supervised & Unsupervised ML", videoId: "i_LwzRVP7bg", videoTitle: "Machine Learning - Chapter 1: Supervised vs Unsupervised Models", xp: 100, content: <div><p>Supervised learning trains models on labeled datasets; unsupervised learning finds hidden patterns in unlabeled data.</p></div> },
+        { id: "ml_regression", title: "2. Linear & Logistic Regression", videoId: "i_LwzRVP7bg", videoTitle: "Machine Learning - Chapter 2: Regression Algorithms & Cost Functions", xp: 150, content: <div><p>Predicting continuous values and classification probabilities using gradient descent.</p></div> },
+        { id: "ml_trees", title: "3. Decision Trees & Random Forests", videoId: "i_LwzRVP7bg", videoTitle: "Machine Learning - Chapter 3: Tree Ensembles & Random Forests", xp: 150, content: <div><p>Tree-based models and ensemble methods for classification and regression tasks.</p></div> },
+        { id: "ml_nn", title: "4. Neural Networks & Backpropagation", videoId: "i_LwzRVP7bg", videoTitle: "Machine Learning - Chapter 4: Deep Learning & Backpropagation", xp: 200, content: <div><p>Deep neural network architectures, activation functions, and backpropagation optimization.</p></div> },
+        { id: "ml_eval", title: "5. Model Evaluation & Overfitting", videoId: "i_LwzRVP7bg", videoTitle: "Machine Learning - Chapter 5: Precision, Recall & Cross Validation", xp: 200, content: <div><p>Evaluating model performance using confusion matrices, ROC curves, and regularization.</p></div> },
+        { id: "ml_tools", title: "6. Scikit-Learn & PyTorch Setup", videoId: "i_LwzRVP7bg", videoTitle: "Machine Learning - Chapter 6: Production ML Pipelines with Scikit-Learn", xp: 250, content: <div><p>Building end-to-end ML workflows using Python, Scikit-Learn, and PyTorch.</p></div> }
+      ],
+      quiz: [{ q: "Which type of ML uses labeled data?", options: ["Supervised", "Unsupervised", "Reinforcement", "Random"], correct: 0 }]
+    },
+    nextjs: {
+      name: "Fullstack Next.js 14",
+      class: "react",
+      instructor: "Vercel Academy",
+      badgeName: "Next.js Master Badge",
+      badgeKey: "next_badge",
+      topics: [
+        { id: "nextjs_intro", title: "1. App Router & Server Components", videoId: "wm5gMKCORL4", videoTitle: "Next.js 14 - Chapter 1: App Router & Server Actions", xp: 150, content: <div><p>Next.js 14 App Router introduces React Server Components for fast initial page rendering and reduced client bundle size.</p></div> },
+        { id: "nextjs_actions", title: "2. Server Actions & Form Mutations", videoId: "wm5gMKCORL4", videoTitle: "Next.js 14 - Chapter 2: Server Actions & Data Mutation", xp: 150, content: <div><p>Executing server-side code directly from client UI forms using Server Actions.</p></div> },
+        { id: "nextjs_routing", title: "3. Dynamic Routing & Middleware", videoId: "wm5gMKCORL4", videoTitle: "Next.js 14 - Chapter 3: Dynamic Segments & Edge Middleware", xp: 200, content: <div><p>Intercepting requests and managing dynamic route segments with Next.js middleware.</p></div> },
+        { id: "nextjs_rendering", title: "4. SSR vs SSG vs ISR Caching", videoId: "wm5gMKCORL4", videoTitle: "Next.js 14 - Chapter 4: Rendering Strategies & Full-Route Caching", xp: 200, content: <div><p>Optimizing static site generation, server-side rendering, and incremental static regeneration.</p></div> },
+        { id: "nextjs_auth", title: "5. NextAuth.js Authentication", videoId: "wm5gMKCORL4", videoTitle: "Next.js 14 - Chapter 5: NextAuth & OAuth Provider Setup", xp: 250, content: <div><p>Securing fullstack applications with session tokens, JWTs, and OAuth authentication.</p></div> },
+        { id: "nextjs_deploy", title: "6. Vercel Edge Deployment", videoId: "wm5gMKCORL4", videoTitle: "Next.js 14 - Chapter 6: Edge Network Deployment & Performance", xp: 250, content: <div><p>Deploying Next.js applications to Vercel's global edge network with zero configuration.</p></div> }
+      ],
+      quiz: [{ q: "What is the primary feature of Next.js 14 App Router?", options: ["React Server Components", "XML Layouts", "PHP Support", "jQuery plugins"], correct: 0 }]
+    },
+    web3: {
+      name: "Web3 & Solidity Development",
+      class: "react",
+      instructor: "Patrick Collins",
+      badgeName: "Web3 Architect Badge",
+      badgeKey: "web3_badge",
+      topics: [
+        { id: "web3_intro", title: "1. Blockchain & Smart Contracts", videoId: "gyMwXuJrbJQ", videoTitle: "Web3 - Chapter 1: Smart Contracts & EVM Execution", xp: 150, content: <div><p>Web3 decentralizes application logic using smart contracts running on peer-to-peer blockchain nodes.</p></div> },
+        { id: "web3_solidity", title: "2. Solidity Syntax & Data Types", videoId: "gyMwXuJrbJQ", videoTitle: "Web3 - Chapter 2: Solidity Contracts, Mappings & Structs", xp: 150, content: <div><p>Writing smart contracts with state variables, mappings, and functions in Solidity.</p></div> },
+        { id: "web3_foundry", title: "3. Hardhat & Foundry Testing", videoId: "gyMwXuJrbJQ", videoTitle: "Web3 - Chapter 3: Smart Contract Unit Testing & Deployment", xp: 200, content: <div><p>Testing and deploying smart contracts using Hardhat and Foundry toolchains.</p></div> },
+        { id: "web3_tokens", title: "4. ERC-20 & ERC-721 Standards", videoId: "gyMwXuJrbJQ", videoTitle: "Web3 - Chapter 4: Fungible & Non-Fungible Token Standards", xp: 200, content: <div><p>Building custom ERC-20 tokens and ERC-721 NFT smart contracts with OpenZeppelin.</p></div> },
+        { id: "web3_ethers", title: "5. Ethers.js & Wagmi Frontend", videoId: "gyMwXuJrbJQ", videoTitle: "Web3 - Chapter 5: MetaMask & Ethers.js Wallet Connection", xp: 250, content: <div><p>Connecting React frontends to Web3 wallets and blockchain providers using Wagmi.</p></div> },
+        { id: "web3_security", title: "6. Smart Contract Auditing & Gas", videoId: "gyMwXuJrbJQ", videoTitle: "Web3 - Chapter 6: Reentrancy Attacks & Gas Optimization", xp: 250, content: <div><p>Auditing smart contracts against security vulnerabilities and optimizing gas consumption.</p></div> }
+      ],
+      quiz: [{ q: "What executes smart contracts on Ethereum?", options: ["EVM (Ethereum Virtual Machine)", "JVM", "V8", "Node.js"], correct: 0 }]
+    },
+    aws: {
+      name: "Cloud Computing with AWS",
+      class: "springboot",
+      instructor: "Stephane Maarek",
+      badgeName: "AWS Cloud Master Badge",
+      badgeKey: "aws_badge",
+      topics: [
+        { id: "aws_intro", title: "1. AWS IAM & EC2 Infrastructure", videoId: "ulprqHHWlng", videoTitle: "AWS Cloud - Chapter 1: Identity Access Management & EC2", xp: 150, content: <div><p>Amazon Web Services (AWS) provides cloud compute (EC2), storage (S3), and serverless functions (Lambda).</p></div> },
+        { id: "aws_ec2", title: "2. EC2 Virtual Servers & VPC", videoId: "ulprqHHWlng", videoTitle: "AWS Cloud - Chapter 2: Virtual Private Cloud & Security Groups", xp: 150, content: <div><p>Configuring EC2 virtual servers, auto-scaling groups, and custom Virtual Private Clouds (VPC).</p></div> },
+        { id: "aws_s3", title: "3. S3 Bucket Storage & CDN", videoId: "ulprqHHWlng", videoTitle: "AWS Cloud - Chapter 3: Simple Storage Service & CloudFront CDN", xp: 200, content: <div><p>Storing static assets in S3 buckets and accelerating delivery with CloudFront.</p></div> },
+        { id: "aws_lambda", title: "4. AWS Lambda & Serverless", videoId: "ulprqHHWlng", videoTitle: "AWS Cloud - Chapter 4: Serverless Computing & API Gateway", xp: 200, content: <div><p>Building event-driven serverless backends using AWS Lambda and API Gateway.</p></div> },
+        { id: "aws_db", title: "5. RDS & DynamoDB Databases", videoId: "ulprqHHWlng", videoTitle: "AWS Cloud - Chapter 5: Relational & NoSQL Cloud Databases", xp: 250, content: <div><p>Managing managed SQL databases with Amazon RDS and NoSQL tables with DynamoDB.</p></div> },
+        { id: "aws_ecs", title: "6. Docker & ECS Container Management", videoId: "ulprqHHWlng", videoTitle: "AWS Cloud - Chapter 6: Elastic Container Service & Fargate", xp: 250, content: <div><p>Orchestrating containerized microservices using Docker, ECS, and AWS Fargate.</p></div> }
+      ],
+      quiz: [{ q: "Which AWS service provides virtual servers?", options: ["EC2", "S3", "DynamoDB", "Lambda"], correct: 0 }]
+    },
+    python: {
+      name: "Python for Data Science",
+      class: "java",
+      instructor: "Corey Schafer",
+      badgeName: "Data Scientist Badge",
+      badgeKey: "py_badge",
+      topics: [
+        { id: "python_intro", title: "1. Python Core & Data Structures", videoId: "LHBE6Q9XlzI", videoTitle: "Python Data Science - Chapter 1: Core Syntax & Data Structures", xp: 150, content: <div><p>Python is the premier language for data science, leveraging NumPy and Pandas for array and tabular data manipulation.</p></div> },
+        { id: "python_numpy", title: "2. NumPy N-Dimensional Arrays", videoId: "LHBE6Q9XlzI", videoTitle: "Python Data Science - Chapter 2: Vectorized Operations with NumPy", xp: 150, content: <div><p>Performing fast numerical computations and array slicing using NumPy.</p></div> },
+        { id: "python_pandas", title: "3. Pandas DataFrames & Manipulation", videoId: "LHBE6Q9XlzI", videoTitle: "Python Data Science - Chapter 3: Data Cleaning & DataFrame Wrangling", xp: 200, content: <div><p>Filtering, joining, and aggregating complex datasets using Pandas DataFrames.</p></div> },
+        { id: "python_viz", title: "4. Matplotlib & Seaborn Visualization", videoId: "LHBE6Q9XlzI", videoTitle: "Python Data Science - Chapter 4: Data Visualization & Charts", xp: 200, content: <div><p>Generating publication-quality plots and heatmaps with Matplotlib and Seaborn.</p></div> },
+        { id: "python_eda", title: "5. Exploratory Data Analysis (EDA)", videoId: "LHBE6Q9XlzI", videoTitle: "Python Data Science - Chapter 5: Exploratory Data Analysis", xp: 250, content: <div><p>Uncovering statistical insights, handling missing values, and detecting outliers.</p></div> },
+        { id: "python_ml", title: "6. Scikit-Learn Machine Learning", videoId: "LHBE6Q9XlzI", videoTitle: "Python Data Science - Chapter 6: Predictive Modeling with Scikit-Learn", xp: 250, content: <div><p>Training regression and classification models using Scikit-Learn pipelines.</p></div> }
+      ],
+      quiz: [{ q: "Which library is used for dataframes in Python?", options: ["Pandas", "React", "Express", "Spring"], correct: 0 }]
+    },
+    uiux: {
+      name: "UI/UX Design Masterclass",
+      class: "react",
+      instructor: "Daniel Walter Scott",
+      badgeName: "UI/UX Designer Badge",
+      badgeKey: "uiux_badge",
+      topics: [
+        { id: "uiux_intro", title: "1. Design Thinking & Wireframing", videoId: "c9Wg6Cb_YlU", videoTitle: "UI/UX Design - Chapter 1: Design Systems & Figma Layouts", xp: 150, content: <div><p>UI/UX Design focuses on creating intuitive user experiences, accessibility, and visual hierarchy using Figma.</p></div> },
+        { id: "uiux_personas", title: "2. User Research & Personas", videoId: "c9Wg6Cb_YlU", videoTitle: "UI/UX Design - Chapter 2: User Personas & Empathy Maps", xp: 150, content: <div><p>Conducting user interviews, building target personas, and mapping customer journeys.</p></div> },
+        { id: "uiux_figma", title: "3. Figma Components & Auto Layout", videoId: "c9Wg6Cb_YlU", videoTitle: "UI/UX Design - Chapter 3: Figma Auto Layout & Component Variants", xp: 200, content: <div><p>Designing responsive UI components using Figma Auto Layout and variants.</p></div> },
+        { id: "uiux_designsys", title: "4. Design Systems & Micro-Interactions", videoId: "c9Wg6Cb_YlU", videoTitle: "UI/UX Design - Chapter 4: Design Systems & Prototyping Animations", xp: 200, content: <div><p>Building comprehensive design systems and interactive micro-animations.</p></div> },
+        { id: "uiux_testing", title: "5. Usability Testing & Heatmaps", videoId: "c9Wg6Cb_YlU", videoTitle: "UI/UX Design - Chapter 5: Usability Testing & Analytics", xp: 250, content: <div><p>Testing prototypes with users, analyzing heatmaps, and iterating on feedback.</p></div> },
+        { id: "uiux_handoff", title: "6. Handoff to Web Developers", videoId: "c9Wg6Cb_YlU", videoTitle: "UI/UX Design - Chapter 6: Developer Handoff & Asset Export", xp: 250, content: <div><p>Preparing Figma design specs, tokens, and asset exports for frontend developers.</p></div> }
+      ],
+      quiz: [{ q: "Which tool is standard for modern UI/UX design?", options: ["Figma", "MS Paint", "Notepad", "Eclipse"], correct: 0 }]
+    },
+    dsa: {
+      name: "Data Structures & Algorithms (DSA)",
+      class: "java",
+      instructor: "Striver (takeUforward)",
+      badgeName: "FAANG DSA Badge",
+      badgeKey: "dsa_badge",
+      topics: [
+        { id: "dsa_intro", title: "1. Big-O Time & Space Complexity", videoId: "rZ41y93P2Qo", videoTitle: "DSA - Chapter 1: Complexity Analysis & Asymptotic Notations", xp: 100, content: <div><p>Big-O notation quantifies how algorithm runtime or space requirements grow as input size grows.</p></div> },
+        { id: "dsa_arrays", title: "2. Arrays, Matrix & Two Pointers", videoId: "rZ41y93P2Qo", videoTitle: "DSA - Chapter 2: Array Manipulations & Two Pointer Technique", xp: 150, content: <div><p>Solving array problems with two pointers, sliding window, and prefix sums.</p></div> },
+        { id: "dsa_lists", title: "3. Linked Lists & Stack Queues", videoId: "rZ41y93P2Qo", videoTitle: "DSA - Chapter 3: Linked Lists, Stacks & Queues", xp: 150, content: <div><p>Reversing linked lists, cycle detection, and LIFO/FIFO stack/queue data structures.</p></div> },
+        { id: "dsa_trees", title: "4. Binary Trees & BST Traversal", videoId: "rZ41y93P2Qo", videoTitle: "DSA - Chapter 4: Binary Trees & BST Traversals", xp: 200, content: <div><p>Inorder, preorder, postorder traversals, and Binary Search Tree properties.</p></div> },
+        { id: "dsa_dp", title: "5. Dynamic Programming Foundations", videoId: "rZ41y93P2Qo", videoTitle: "DSA - Chapter 5: Dynamic Programming & Memoization", xp: 250, content: <div><p>Solving complex optimization problems with memoization and tabulation.</p></div> },
+        { id: "dsa_graphs", title: "6. Graph Algorithms (BFS/DFS)", videoId: "rZ41y93P2Qo", videoTitle: "DSA - Chapter 6: Graph Traversals & Shortest Path", xp: 250, content: <div><p>Breadth-First Search, Depth-First Search, Dijkstra's algorithm, and topological sort.</p></div> }
+      ],
+      quiz: [{ q: "What is the time complexity of binary search?", options: ["O(log N)", "O(N)", "O(N^2)", "O(1)"], correct: 0 }]
+    },
+    node: {
+      name: "Advanced Node.js & Microservices",
+      class: "springboot",
+      instructor: "Telusko",
+      badgeName: "Node Microservices Badge",
+      badgeKey: "node_badge",
+      topics: [
+        { id: "node_intro", title: "1. Node.js Event Loop & Express", videoId: "LAUi8pOIc68", videoTitle: "Node.js Microservices - Chapter 1: Non-Blocking I/O & Express APIs", xp: 150, content: <div><p>Node.js uses a single-threaded non-blocking event loop powered by libuv to handle high concurrency.</p></div> },
+        { id: "node_express", title: "2. RESTful API Architecture", videoId: "LAUi8pOIc68", videoTitle: "Node.js Microservices - Chapter 2: Express Controllers & Middleware", xp: 150, content: <div><p>Structuring scalable Express REST APIs with controllers, routes, and error middleware.</p></div> },
+        { id: "node_db", title: "3. PostgreSQL & Prisma ORM", videoId: "LAUi8pOIc68", videoTitle: "Node.js Microservices - Chapter 3: Relational DBs & Prisma ORM", xp: 200, content: <div><p>Connecting Node.js microservices to PostgreSQL using type-safe Prisma ORM queries.</p></div> },
+        { id: "node_docker", title: "4. Docker Containerization", videoId: "LAUi8pOIc68", videoTitle: "Node.js Microservices - Chapter 4: Dockerizing Microservices", xp: 200, content: <div><p>Writing Dockerfiles and Docker Compose files to run microservices in isolated containers.</p></div> },
+        { id: "node_mq", title: "5. RabbitMQ & Event Streaming", videoId: "LAUi8pOIc68", videoTitle: "Node.js Microservices - Chapter 5: Message Queues & Event Streaming", xp: 250, content: <div><p>Asynchronous inter-service messaging using RabbitMQ exchanges and queues.</p></div> },
+        { id: "node_gateway", title: "6. API Gateway & Microservices Auth", videoId: "LAUi8pOIc68", videoTitle: "Node.js Microservices - Chapter 6: API Gateway & Centralized Auth", xp: 250, content: <div><p>Routing requests through a central API gateway with JWT authorization.</p></div> }
+      ],
+      quiz: [{ q: "What powers Node.js non-blocking I/O?", options: ["Libuv & Event Loop", "JVM", "Multi-threading", "Apache"], correct: 0 }]
+    },
+
     react: {
       name: "React Developer",
       class: "react",
@@ -36,6 +241,8 @@ export default function LearningPage() {
         {
           id: "react_intro",
           title: "1. React Introduction",
+          videoId: "w7ejDZ8SWv8",
+          videoTitle: "React JS Full Course - Chapter 1: Introduction & Environment Setup",
           xp: 100,
           content: (
             <div>
@@ -57,6 +264,8 @@ root.render(heading);`}</code>
         {
           id: "react_jsx",
           title: "2. React JSX Syntax",
+          videoId: "bMknfKXIFA8",
+          videoTitle: "React JS Full Course - Chapter 2: JSX Syntax & Dynamic Rendering",
           xp: 100,
           content: (
             <div>
@@ -83,6 +292,8 @@ const element = (
         {
           id: "react_components",
           title: "3. Functional Components",
+          videoId: "SqcY0GlETPk",
+          videoTitle: "React JS Full Course - Chapter 3: Functional Components & Reusability",
           xp: 150,
           content: (
             <div>
@@ -108,6 +319,8 @@ export default ProfileCard;`}</code>
         {
           id: "react_props_state",
           title: "4. State & Props",
+          videoId: "0riHps91AzE",
+          videoTitle: "React JS Full Course - Chapter 4: State Management & Props Passing",
           xp: 150,
           content: (
             <div>
@@ -136,6 +349,8 @@ function ClickCounter() {
         {
           id: "react_hooks",
           title: "5. React Hooks (useEffect)",
+          videoId: "LDB4uaJ87e0",
+          videoTitle: "React JS Full Course - Chapter 5: React Hooks (useState & useEffect)",
           xp: 200,
           content: (
             <div>
@@ -162,6 +377,8 @@ function UserLoader() {
         {
           id: "react_lifecycle",
           title: "6. React Component Lifecycle",
+          videoId: "TNhaISOUy6Q",
+          videoTitle: "React JS Full Course - Chapter 6: Lifecycle Phases & Optimization",
           xp: 150,
           content: (
             <div>
@@ -252,6 +469,8 @@ useEffect(() => {
         {
           id: "java_intro",
           title: "1. Java JVM, JRE & JDK",
+          videoId: "eIrMbAQSU34",
+          videoTitle: "Java Tutorial - Chapter 1: JDK, JRE, JVM Architecture & Setup",
           xp: 100,
           content: (
             <div>
@@ -276,6 +495,8 @@ public class Main {
         {
           id: "java_datatypes",
           title: "2. Data Types & Variables",
+          videoId: "A74TOX803D0",
+          videoTitle: "Java Tutorial - Chapter 2: Primitive & Reference Data Types",
           xp: 100,
           content: (
             <div>
@@ -295,6 +516,8 @@ String banner = "Welcome to SkillSphere Learning!";`}</code>
         {
           id: "java_oops",
           title: "3. Core OOPs Pillars",
+          videoId: "bSrmtUscR_4",
+          videoTitle: "Java Tutorial - Chapter 3: OOPs Pillars (Classes, Inheritance, Polymorphism)",
           xp: 200,
           content: (
             <div>
@@ -324,6 +547,8 @@ class Dog extends Animal {
         {
           id: "java_exceptions",
           title: "4. Exception Handling",
+          videoId: "1ZX_iGz01-Q",
+          videoTitle: "Java Tutorial - Chapter 4: Exception Handling & Try-Catch-Finally",
           xp: 150,
           content: (
             <div>
@@ -348,6 +573,8 @@ public class ExceptionTest {
         {
           id: "java_collections",
           title: "5. Collections Framework",
+          videoId: "VI_P-kF_b6c",
+          videoTitle: "Java Tutorial - Chapter 5: Collections Framework (ArrayList, HashMap, HashSet)",
           xp: 200,
           content: (
             <div>
@@ -377,6 +604,8 @@ public class CollectionsTest {
         {
           id: "java_multithreading",
           title: "6. Java Multithreading",
+          videoId: "r_MbozD32eo",
+          videoTitle: "Java Tutorial - Chapter 6: Multithreading & Concurrent Execution",
           xp: 200,
           content: (
             <div>
@@ -466,6 +695,8 @@ public class ThreadTest {
         {
           id: "springboot_intro",
           title: "1. Spring Boot Introduction",
+          videoId: "5PdEmeopJVQ",
+          videoTitle: "Spring Boot Tutorial - Chapter 1: Introduction & Project Setup",
           xp: 100,
           content: (
             <div>
@@ -494,6 +725,8 @@ public class Application {
         {
           id: "springboot_mvc",
           title: "2. Controllers & Mappings",
+          videoId: "vtPkZShrvXQ",
+          videoTitle: "Spring Boot Tutorial - Chapter 2: Controllers & Web Request Mappings",
           xp: 150,
           content: (
             <div>
@@ -518,6 +751,8 @@ public class MessageController {
         {
           id: "springboot_di",
           title: "3. Dependency Injection",
+          videoId: "vtPkZShrvXQ",
+          videoTitle: "Spring Boot Tutorial - Chapter 3: Dependency Injection & IoC Containers",
           xp: 150,
           content: (
             <div>
@@ -545,6 +780,8 @@ class XpController {
         {
           id: "springboot_jpa",
           title: "4. Spring Data JPA Repository",
+          videoId: "9SGDpanrc8U",
+          videoTitle: "Spring Boot Tutorial - Chapter 4: Spring Data JPA & Database Persistence",
           xp: 200,
           content: (
             <div>
@@ -573,6 +810,8 @@ interface UserProfileRepository extends JpaRepository<UserProfile, String> {
         {
           id: "springboot_rest",
           title: "5. Spring REST API & Responses",
+          videoId: "35EQXmHKZYs",
+          videoTitle: "Spring Boot Tutorial - Chapter 5: Building RESTful Web Services",
           xp: 200,
           content: (
             <div>
@@ -597,6 +836,8 @@ public ResponseEntity<String> addXp(@RequestBody XpPayload payload) {
         {
           id: "springboot_security",
           title: "6. Spring Boot Security & JWT",
+          videoId: "herX4m47GZ0",
+          videoTitle: "Spring Boot Tutorial - Chapter 6: Spring Security & JWT Authentication",
           xp: 250,
           content: (
             <div>
@@ -679,23 +920,83 @@ public class SecurityConfig {
     }
   };
 
+  const trackToCourseIdMap = {
+    fsd: 1,
+    react: 2,
+    javascript: 3,
+    dsa: 4,
+    java: 4,
+    genai: 5,
+    ml: 6,
+    node: 7,
+    springboot: 7,
+    nextjs: 8,
+    web3: 9,
+    aws: 10,
+    python: 11,
+    uiux: 12
+  };
+
+  const isCurrentTrackEnrolled = (trackKey = activeTrack) => {
+    try {
+      const savedIds = localStorage.getItem("enrolled_course_ids");
+      const enrolledIds = savedIds ? JSON.parse(savedIds) : [1, 2, 3]; // Default enrolled
+      const targetCourseId = trackToCourseIdMap[trackKey] || 2;
+      return enrolledIds.includes(targetCourseId);
+    } catch {
+      return true;
+    }
+  };
+
+  const [showQuickTipModal, setShowQuickTipModal] = useState(true);
+
+  const getTopicQuickTip = (topicId) => {
+    const tipsMap = {
+      react_intro: "React Virtual DOM computes diffs in O(N) linear heuristics! Never mutate state directly—always use useState setters.",
+      react_jsx: "Always attach unique key props (e.g. key={item.id}) to mapped JSX elements so React can optimize DOM reconciliation.",
+      react_components: "Keep functional components pure! They should return identical JSX for the same props without side effects.",
+      react_props_state: "State updates are async! When new state depends on previous state, use setCount(prev => prev + 1).",
+      react_hooks: "Never call Hooks inside loops, conditions, or nested functions! Always call them at the top level of your component.",
+      react_lifecycle: "Return cleanup functions in useEffect to unsubscribe from event listeners and prevent memory leaks.",
+      
+      javascript_intro: "JavaScript creates an Execution Context in 2 phases: 1) Memory Allocation (Hoisting) 2) Code Execution.",
+      javascript_closures: "Closures retain references to outer scope variables! Be cautious of memory retention in long-lived listeners.",
+      javascript_async: "Microtask Queue (Promises) has HIGHER execution priority than Macrotask Queue (setTimeout/setInterval).",
+      javascript_promises: "Use Promise.allSettled() to await multiple operations safely without fail-fast crashes.",
+      javascript_proto: "Objects inherit from Object.prototype. Use Object.create(proto) for clean prototypal delegation.",
+      javascript_es6: ".map(), .filter(), and .reduce() are pure functions that do not mutate original arrays.",
+
+      java_intro: "Primitive variables live on the Stack; object instances and arrays are allocated on the Heap.",
+      java_oops: "Prefer composition over inheritance to create loosely-coupled, maintainable class hierarchies.",
+      dsa_intro: "Binary Search operates in O(log N) time on sorted data. Midpoint formula: low + (high - low) / 2 to avoid overflow.",
+      springboot_intro: "@RestController combines @Controller & @ResponseBody to automatically serialize outputs to JSON."
+    };
+
+    return tipsMap[topicId] || `Master the core architecture of ${currentTrack?.name || 'this module'}, practice writing modular code, and test edge cases thoroughly!`;
+  };
+
   // Get current active track configuration
-  const currentTrack = tracks[activeTrack];
+  const currentTrack = tracks[activeTrack] || tracks["react"];
 
   // Get current active topic configuration
-  const currentTopic = currentTrack.topics.find(t => t.id === activeTopicId) || currentTrack.topics[0];
+  const currentTopic = currentTrack?.topics?.find(t => t.id === activeTopicId) || currentTrack?.topics?.[0] || tracks["react"].topics[0];
 
   // Calculate track progress
-  const trackTopicIds = currentTrack.topics.map(t => t.id);
+  const trackTopicIds = (currentTrack?.topics || []).map(t => t.id);
   const completedInTrackCount = trackTopicIds.filter(id => completedTopics.includes(id)).length;
-  const trackProgressPct = Math.round((completedInTrackCount / currentTrack.topics.length) * 100);
+  const trackProgressPct = Math.round((completedInTrackCount / (currentTrack?.topics?.length || 1)) * 100);
 
   const handleTrackChange = (trackKey) => {
     setActiveTrack(trackKey);
+    setIsPlayingVideo(false);
     // Set default topic to first topic in selected track
-    const firstTopicId = tracks[trackKey].topics[0].id;
+    const targetTrack = tracks[trackKey] || tracks["react"];
+    const firstTopicId = targetTrack?.topics?.[0]?.id || "react_intro";
     setActiveTopicId(firstTopicId);
     
+    // Update browser URL parameter in real time
+    navigate(`/learning?track=${trackKey}`, { replace: true });
+
     // Reset local quiz state
     setQuizAnswers({});
     setQuizSubmitted(false);
@@ -712,8 +1013,11 @@ public class SecurityConfig {
     e.preventDefault();
     if (!user) return;
     
+    const quizList = currentTrack?.quiz || [
+      { q: "What is the core concept of this course track?", options: ["High performance & architecture", "Manual data entry", "Unstyled text", "Hardware assembly"], correct: 0 }
+    ];
     let correctCount = 0;
-    currentTrack.quiz.forEach((question, idx) => {
+    quizList.forEach((question, idx) => {
       if (quizAnswers[idx] === question.correct) {
         correctCount++;
       }
@@ -729,7 +1033,10 @@ public class SecurityConfig {
 
     // Dynamic XP Reward: 15 XP per Mark (Max 300 XP per track)
     if (!wasQuizPreviouslyPassed) {
-      earnXp(marks * 15);
+      const earnedXpAmount = marks * 15;
+      if (earnXp && earnedXpAmount > 0) {
+        earnXp(earnedXpAmount);
+      }
       localStorage.setItem(isQuizPassedKey, "true");
     }
 
@@ -741,98 +1048,6 @@ public class SecurityConfig {
       setBadgeUnlocked(false);
     }
   };
-
-  const isRegisteredStudent = user && user.role === "STUDENT";
-
-  if (!isRegisteredStudent) {
-    return (
-      <div className="learning-portal-page">
-        <Background />
-        <Navbar />
-
-        <main className="learning-portal-content">
-          
-          {/* Header Title Section */}
-          <section className="lp-header-section guest-hero">
-            <div className="lp-badge" style={{
-              display: 'inline-block',
-              background: 'rgba(0, 229, 255, 0.08)',
-              border: '1px solid rgba(0, 229, 255, 0.2)',
-              color: '#00e5ff',
-              padding: '6px 16px',
-              borderRadius: '20px',
-              fontSize: '14px',
-              fontFamily: 'Orbitron, sans-serif',
-              marginBottom: '15px'
-            }}>
-              🎓 SKILLSPHERE ACADEMY
-            </div>
-            <h1 style={{ marginBottom: '15px' }}>Explore Professional Code Tracks</h1>
-            <p>We provide hands-on modules in React, Java, and Spring Boot. Pass assessments, earn verifiable cyber-badges, and track your metrics!</p>
-          </section>
-
-          {/* Grid of Courses */}
-          <div className="guest-courses-grid">
-            {Object.keys(tracks).map((trackKey) => {
-              const track = tracks[trackKey];
-              return (
-                <div key={trackKey} className={`guest-course-card ${trackKey}`}>
-                  <div className="guest-card-header">
-                    <span className="guest-course-icon">
-                      {trackKey === "react" ? "⚛️" : trackKey === "java" ? "☕" : "🍃"}
-                    </span>
-                    <span className="guest-chapters-count">{track.topics.length} Chapters</span>
-                  </div>
-                  
-                  <h3>{track.name}</h3>
-                  <p className="guest-instructor">Led by <strong>{track.instructor}</strong></p>
-                  
-                  <div className="guest-badge-preview">
-                    <span>🏆 Reward Badge:</span> <strong>{track.badgeName}</strong>
-                  </div>
-
-                  <div className="guest-syllabus-box">
-                    <h4>Syllabus Overview</h4>
-                    <ul>
-                      {track.topics.map((t) => (
-                        <li key={t.id}>{t.title}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <button 
-                    className="guest-unlock-btn"
-                    onClick={() => navigate('/register', { state: { role: 'STUDENT', step: 2 } })}
-                  >
-                    Start Course Now
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Locked Features Callout */}
-          <section className="guest-locked-callout">
-            <div className="lock-icon">🔒</div>
-            <h2>Unlock Full Interactive Learning Suite</h2>
-            <p>
-              Register a free Student account to gain full access to the video libraries, active reading sandbox modules, real-time code complete rewards, and badge-unlocking final assessments.
-            </p>
-            <div className="guest-cta-buttons">
-              <button className="cta-register-btn" onClick={() => navigate('/register', { state: { role: 'STUDENT', step: 2 } })}>
-                Register Student Profile
-              </button>
-              <button className="cta-login-btn" onClick={() => navigate('/login')}>
-                Sign In
-              </button>
-            </div>
-          </section>
-        </main>
-
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="learning-portal-page">
@@ -848,25 +1063,34 @@ public class SecurityConfig {
         </section>
 
         {/* Track Selector Tabs */}
-        <section className="lp-track-tabs">
-          <button 
-            className={`lp-tab-btn react ${activeTrack === "react" ? "active" : ""}`}
-            onClick={() => handleTrackChange("react")}
-          >
-            ⚛️ React Development
-          </button>
-          <button 
-            className={`lp-tab-btn java ${activeTrack === "java" ? "active" : ""}`}
-            onClick={() => handleTrackChange("java")}
-          >
-            ☕ Java OOPs
-          </button>
-          <button 
-            className={`lp-tab-btn springboot ${activeTrack === "springboot" ? "active" : ""}`}
-            onClick={() => handleTrackChange("springboot")}
-          >
-            🍃 Spring Boot Microservices
-          </button>
+        <section className="lp-track-tabs" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '25px', justifyContent: 'center', position: 'relative', zIndex: 10 }}>
+          {Object.keys(tracks).map(key => {
+            const trk = tracks[key];
+            const isActive = activeTrack === key;
+            const isEnrolled = isCurrentTrackEnrolled(key);
+            return (
+              <button
+                key={key}
+                type="button"
+                className={`lp-tab-btn ${trk.class || 'react'} ${isActive ? "active" : ""}`}
+                onClick={() => handleTrackChange(key)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '24px',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  position: 'relative',
+                  zIndex: 20,
+                  border: isEnrolled ? (isActive ? '1px solid #00e5ff' : '1px solid rgba(255,255,255,0.15)') : '1px dashed rgba(239,68,68,0.5)',
+                  opacity: isEnrolled ? 1 : 0.85
+                }}
+              >
+                {isEnrolled ? (isActive ? "▶ " : "✓ ") : "🔒 "}{trk.name}
+              </button>
+            );
+          })}
         </section>
 
         {/* Track Progress Bar */}
@@ -886,8 +1110,45 @@ public class SecurityConfig {
           </div>
         </section>
 
-        {/* Workspace Columns */}
-        <div className="lp-split-workspace">
+        {/* Workspace Columns / Lock Guard */}
+        {!isCurrentTrackEnrolled() ? (
+          <section className="lp-locked-workspace-banner" style={{
+            background: 'rgba(15, 23, 42, 0.9)',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            borderRadius: '20px',
+            padding: '50px 30px',
+            textAlign: 'center',
+            margin: '30px 0',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(12px)'
+          }}>
+            <div style={{ fontSize: '64px', marginBottom: '15px' }}>🔒</div>
+            <h2 style={{ fontFamily: 'Orbitron, sans-serif', color: '#ef4444', fontSize: '28px', marginBottom: '14px' }}>
+              Course Content Locked — Enrollment Required
+            </h2>
+            <p style={{ color: '#94a3b8', fontSize: '17px', maxWidth: '650px', margin: '0 auto 25px auto', lineHeight: '1.6' }}>
+              You haven't enrolled in <strong>{currentTrack.name}</strong> yet. Please complete the quick enrollment checkout to unlock all 6 video modules, GFG reference notes, and cyber-badge assessments!
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/courses')}
+              style={{
+                background: 'linear-gradient(90deg, #ef4444, #f97316)',
+                color: '#ffffff',
+                border: 'none',
+                padding: '14px 36px',
+                borderRadius: '30px',
+                fontSize: '16px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                boxShadow: '0 0 25px rgba(239, 68, 68, 0.4)'
+              }}
+            >
+              💳 Go to Courses Catalog & Enroll ↗
+            </button>
+          </section>
+        ) : (
+          <div className="lp-split-workspace">
           
           {/* Left Sidebar Chapter List */}
           <aside className="lp-sidebar-chapters">
@@ -956,7 +1217,9 @@ public class SecurityConfig {
                 )}
 
                 <form onSubmit={handleSubmitQuiz} className="lp-quiz-container">
-                  {currentTrack.quiz.map((item, qIdx) => (
+                  {(currentTrack?.quiz || [
+                    { q: "What is the core concept of this course track?", options: ["High performance & architecture", "Manual data entry", "Unstyled text", "Hardware assembly"], correct: 0 }
+                  ]).map((item, qIdx) => (
                     <div key={qIdx} className="lp-quiz-question-card">
                       <p className="lp-quiz-question-text">{qIdx + 1}. {item.q}</p>
                       <div className="lp-quiz-options">
@@ -1014,6 +1277,70 @@ public class SecurityConfig {
             ) : (
               /* Tutorial Render Mode */
               <div>
+                {/* Quick Revision Tip Pop-Up Card */}
+                {showQuickTipModal ? (
+                  <div className="lp-quick-tip-card" style={{
+                    background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.14), rgba(138, 46, 255, 0.14))',
+                    border: '1px solid rgba(0, 229, 255, 0.45)',
+                    borderRadius: '12px',
+                    padding: '16px 20px',
+                    marginBottom: '25px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '15px',
+                    boxShadow: '0 8px 25px rgba(0, 229, 255, 0.2)'
+                  }}>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <span style={{ fontSize: '26px' }}>💡</span>
+                      <div>
+                        <strong style={{ color: '#00e5ff', fontSize: '14px', fontFamily: 'Orbitron, sans-serif', display: 'block', marginBottom: '4px' }}>
+                          Quick Pro-Tip ({currentTopic?.title}):
+                        </strong>
+                        <span style={{ color: '#f8fafc', fontSize: '13px', lineHeight: '1.5' }}>
+                          {getTopicQuickTip(currentTopic?.id)}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowQuickTipModal(false)}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.15)',
+                        border: 'none',
+                        color: '#ffffff',
+                        padding: '6px 14px',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Got It! 👍
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ marginBottom: '18px', textAlign: 'right' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowQuickTipModal(true)}
+                      style={{
+                        background: 'rgba(0, 229, 255, 0.1)',
+                        border: '1px solid rgba(0, 229, 255, 0.3)',
+                        color: '#00e5ff',
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      💡 Show Quick Pro-Tip
+                    </button>
+                  </div>
+                )}
+
                 <div>
                   <div className="lp-tutorial-header">
                     <div className="lp-tutorial-title">
@@ -1030,31 +1357,178 @@ public class SecurityConfig {
                   </div>
                 </div>
 
-                {/* Clickable video thumbnail redirect container */}
-                <div className="lp-video-section" style={{ marginTop: '30px', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '14px', overflow: 'hidden', background: 'rgba(0,0,0,0.5)', padding: '20px' }}>
-                  <h4 style={{ fontFamily: 'Orbitron', fontSize: '16px', color: activeTrack === "react" ? "#00e5ff" : activeTrack === "java" ? "#f97316" : "#22c55e", marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    🎥 Recommended Video Tutorial by {currentTrack.instructor} (Redirects to YouTube)
-                  </h4>
-                  
-                  <div 
-                    className="lp-video-thumbnail-container"
-                    onClick={() => window.open(`https://www.youtube.com/watch?v=${currentTrack.videoId}`, '_blank')}
-                    style={{ position: 'relative', width: '100%', height: '260px', overflow: 'hidden', borderRadius: '8px', background: '#000' }}
-                  >
-                    <img 
-                      src={`https://img.youtube.com/vi/${currentTrack.videoId}/hqdefault.jpg`} 
-                      alt={currentTrack.videoTitle}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                    <div className="lp-video-play-overlay">
-                      <span>▶</span>
+                {/* GeeksforGeeks (GFG) Reference Notes & Revision Module */}
+                <div className="gfg-notes-section" style={{
+                  marginTop: '30px',
+                  background: 'rgba(15, 23, 42, 0.9)',
+                  border: '1px solid rgba(46, 204, 113, 0.35)',
+                  borderRadius: '14px',
+                  padding: '24px',
+                  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(46, 204, 113, 0.1)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '24px' }}>📖</span>
+                      <h3 style={{ margin: 0, fontFamily: 'Orbitron, sans-serif', color: '#2ecc71', fontSize: '18px' }}>
+                        GeeksforGeeks (GFG) Quick Revision Notes & Article Reference
+                      </h3>
+                    </div>
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      background: 'rgba(46, 204, 113, 0.15)',
+                      color: '#2ecc71',
+                      border: '1px solid rgba(46, 204, 113, 0.3)',
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      textTransform: 'uppercase'
+                    }}>
+                      GFG Verified Notes
+                    </span>
+                  </div>
+
+                  <p style={{ color: '#cbd5e1', fontSize: '14px', lineHeight: '1.6', margin: '0 0 16px 0' }}>
+                    Reference notes compiled from <strong>GeeksforGeeks Tech Articles & Interview Guides</strong> for <em>{currentTopic?.title}</em>.
+                  </p>
+
+                  {/* GFG Summary Breakdown Box */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '15px', marginBottom: '20px' }}>
+                    <div style={{ background: 'rgba(0, 0, 0, 0.35)', padding: '14px', borderRadius: '10px', borderLeft: '4px solid #2ecc71' }}>
+                      <strong style={{ color: '#2ecc71', fontSize: '13px', display: 'block', marginBottom: '4px' }}>⚡ Time Complexity (GFG):</strong>
+                      <span style={{ color: '#f8fafc', fontSize: '13px' }}>
+                        {activeTrack === "react" ? "O(1) Virtual DOM diffing computation" : activeTrack === "java" ? "O(1) Heap allocation / O(Log N) tree ops" : "O(1) Dependency Injection context lookup"}
+                      </span>
+                    </div>
+                    <div style={{ background: 'rgba(0, 0, 0, 0.35)', padding: '14px', borderRadius: '10px', borderLeft: '4px solid #00e5ff' }}>
+                      <strong style={{ color: '#00e5ff', fontSize: '13px', display: 'block', marginBottom: '4px' }}>💾 Auxiliary Space (GFG):</strong>
+                      <span style={{ color: '#f8fafc', fontSize: '13px' }}>
+                        {activeTrack === "react" ? "O(N) component state tree storage" : activeTrack === "java" ? "O(N) object reference heap footprint" : "O(N) Spring container bean instance map"}
+                      </span>
                     </div>
                   </div>
 
-                  <span style={{ fontSize: '13px', color: '#64748b', display: 'block', marginTop: '10px', fontStyle: 'italic' }}>
-                    Click card to play on YouTube: {currentTrack.videoTitle}
-                  </span>
+                  {/* GFG Key Interview Takeaways */}
+                  <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '16px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <h4 style={{ margin: '0 0 10px 0', color: '#f8fafc', fontSize: '14px' }}>💡 Top GFG Interview Takeaways:</h4>
+                    <ul style={{ margin: 0, paddingLeft: '20px', color: '#94a3b8', fontSize: '13px', lineHeight: '1.7' }}>
+                      <li>Understand the core underlying memory lifecycle and execution flow before optimizing code.</li>
+                      <li>Avoid unnecessary re-renders or object allocations inside loop constructs.</li>
+                      <li>Refer to official GFG problem sets to practice coding problems based on this topic.</li>
+                    </ul>
+                  </div>
+
+                  {/* GFG External Link */}
+                  <div style={{ marginTop: '18px', textAlign: 'right' }}>
+                    <a 
+                      href={
+                        activeTrack === "react" 
+                          ? "https://www.geeksforgeeks.org/reactjs-tutorials/" 
+                          : activeTrack === "java" 
+                          ? "https://www.geeksforgeeks.org/java/" 
+                          : "https://www.geeksforgeeks.org/spring-boot-tutorial/"
+                      } 
+                      target="_blank" 
+                      rel="noreferrer"
+                      style={{
+                        color: '#2ecc71',
+                        textDecoration: 'none',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <span>Read Full GeeksforGeeks Article & Practice Problems ↗</span>
+                    </a>
+                  </div>
                 </div>
+
+                {/* Interactive Embedded YouTube Player */}
+                {(() => {
+                  const activeTopicVideoId = currentTopic?.videoId || currentTrack.videoId || "w7ejDZ8SWv8";
+                  const activeTopicVideoTitle = currentTopic?.videoTitle || currentTrack.videoTitle || "React JS Course Video";
+                  
+                  return (
+                    <div className="lp-video-section" style={{ marginTop: '30px', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '14px', overflow: 'hidden', background: 'rgba(15, 23, 42, 0.7)', padding: '20px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+                        <h4 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '16px', color: activeTrack === "react" ? "#00e5ff" : activeTrack === "java" ? "#f97316" : "#22c55e", margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          🎥 Video Lesson: {activeTopicVideoTitle}
+                        </h4>
+                        
+                        <button 
+                          onClick={() => window.open(`https://www.youtube.com/watch?v=${activeTopicVideoId}`, '_blank')}
+                          style={{
+                            background: 'rgba(255, 0, 0, 0.15)',
+                            border: '1px solid rgba(255, 0, 0, 0.4)',
+                            color: '#ff4d4d',
+                            padding: '6px 14px',
+                            borderRadius: '20px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}
+                        >
+                          <span>Open on YouTube ↗</span>
+                        </button>
+                      </div>
+
+                      {isPlayingVideo ? (
+                        <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '10px', overflow: 'hidden', background: '#000', boxShadow: '0 10px 30px rgba(0,0,0,0.8)' }}>
+                          <iframe
+                            src={`https://www.youtube.com/embed/${activeTopicVideoId}?autoplay=1&rel=0`}
+                            title={activeTopicVideoTitle}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              border: 'none'
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div 
+                          className="lp-video-thumbnail-container"
+                          onClick={() => setIsPlayingVideo(true)}
+                          style={{ position: 'relative', width: '100%', height: '300px', overflow: 'hidden', borderRadius: '10px', background: '#000', cursor: 'pointer' }}
+                        >
+                          <img 
+                            src={`https://img.youtube.com/vi/${activeTopicVideoId}/hqdefault.jpg`} 
+                            alt={activeTopicVideoTitle}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }}
+                          />
+                          <div className="lp-video-play-overlay">
+                            <span style={{ fontSize: '32px' }}>▶</span>
+                          </div>
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '12px',
+                            left: '12px',
+                            background: 'rgba(0, 0, 0, 0.75)',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            color: '#ffffff',
+                            fontWeight: '600'
+                          }}>
+                            Click to Play Video Inline
+                          </div>
+                        </div>
+                      )}
+
+                      <span style={{ fontSize: '12px', color: '#64748b', display: 'block', marginTop: '10px', fontStyle: 'italic' }}>
+                        Instructor: <strong>{currentTrack.instructor}</strong> • Interactive Module Video
+                      </span>
+                    </div>
+                  );
+                })()}
 
                 {/* Bottom complete action button */}
                 <div className="lp-completion-area" style={{ marginTop: '35px' }}>
@@ -1088,7 +1562,8 @@ public class SecurityConfig {
             )}
           </article>
 
-        </div>
+          </div>
+        )}
 
       </main>
 
