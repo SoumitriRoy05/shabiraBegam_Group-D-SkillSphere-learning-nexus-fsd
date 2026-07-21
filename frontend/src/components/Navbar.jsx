@@ -1,20 +1,32 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FiMenu } from "react-icons/fi";
 import "../styles/navbar.css";
 
-export default function Navbar() {
+export default function Navbar({ toggleSidebar, isSidebarOpen, showSidebarToggle }) {
   const { user, logout, xp } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   return (
     <header className="navbar">
-      <Link to={user ? (user.role === 'STUDENT' ? '/student-home' : '/workforce-home') : '/'} className="logo" style={{ textDecoration: 'none' }}>
-        <div className="logoIcon">⬢</div>
-        <span className="skill">Skill</span>
-        <span className="sphere">Sphere</span>
-      </Link>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        {showSidebarToggle && (
+          <button 
+            className={`sidebar-toggle-btn-nav ${isSidebarOpen ? 'open' : ''}`}
+            onClick={toggleSidebar}
+            title="Toggle Sidebar"
+          >
+            <FiMenu />
+          </button>
+        )}
+        <Link to={user ? (user.role === 'STUDENT' ? '/student-home' : '/workforce-home') : '/'} className="logo" style={{ textDecoration: 'none' }}>
+          <div className="logoIcon">⬢</div>
+          <span className="skill">Skill</span>
+          <span className="sphere">Sphere</span>
+        </Link>
+      </div>
 
       <nav className="navLinks">
         <Link to={user ? (user.role === 'STUDENT' ? '/student-home' : '/workforce-home') : '/'} className="backHome">
@@ -84,4 +96,4 @@ export default function Navbar() {
       </div>
     </header>
   );
-}
+}

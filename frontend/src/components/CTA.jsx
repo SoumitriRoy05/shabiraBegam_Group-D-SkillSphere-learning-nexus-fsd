@@ -7,7 +7,10 @@ export default function CTA() {
   const { user } = useAuth();
 
   const handleGetStarted = () => {
-    if (user) {
+    const selectionSection = document.getElementById("workspace-selection");
+    if (selectionSection) {
+      selectionSection.scrollIntoView({ behavior: "smooth" });
+    } else if (user) {
       if (user.role === 'STUDENT') {
         navigate('/student-home');
       } else if (user.role === 'EMPLOYEE') {

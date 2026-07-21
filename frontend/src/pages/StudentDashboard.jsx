@@ -4,18 +4,19 @@ import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import Background from "../components/Background";
 import Footer from "../components/Footer";
+import DashboardSidebar from "../components/DashboardSidebar";
 import "../styles/dashboard.css";
 
 export default function StudentDashboard() {
   const { user, xp, earnXp, completedTopics } = useAuth();
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // Active courses aligned dynamically with learning curriculum portal
+
   const reactCompleted = completedTopics ? completedTopics.filter(id => id.startsWith('react_')).length : 0;
   const javaCompleted = completedTopics ? completedTopics.filter(id => id.startsWith('java_')).length : 0;
   const springbootCompleted = completedTopics ? completedTopics.filter(id => id.startsWith('springboot_')).length : 0;
 
-  // Level is computed based on completed modules (completing 1 entire module moves to Level 1)
   const completedModulesCount = 
     (reactCompleted >= 6 ? 1 : 0) + 
     (javaCompleted >= 6 ? 1 : 0) + 
@@ -161,13 +162,13 @@ export default function StudentDashboard() {
     ctx.font = "bold 16px monospace";
     ctx.fillText(cert.id, 900, 565);
 
-    // Gold Medal Seal 🏆
+    
     ctx.fillStyle = "#00e5ff";
     ctx.font = "40px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("🏆", 500, 555);
 
-    // Export and download
+  
     const dataUrl = canvas.toDataURL("image/png");
     const link = document.createElement("a");
     link.download = `SkillSphere_Certificate_${cert.id}.png`;
@@ -270,7 +271,7 @@ export default function StudentDashboard() {
 
   // Action: Redirect to learning portal to allow actual GFG-style study
   const handleStudy = (courseId) => {
-    navigate('/learning');
+    navigate('/learning', { state: { activeTrack: courseId } });
   };
 
   // Action: Claim Quest Rewards
@@ -365,6 +366,13 @@ export default function StudentDashboard() {
   const isReactBadgeUnlocked = user && localStorage.getItem(`badge_react_badge_${user.email || user.username}`) === "true";
   const isJavaBadgeUnlocked = user && localStorage.getItem(`badge_java_badge_${user.email || user.username}`) === "true";
   const isSpringBootBadgeUnlocked = user && localStorage.getItem(`badge_springboot_badge_${user.email || user.username}`) === "true";
+  const isAiBadgeUnlocked = user && localStorage.getItem(`badge_ai_badge_${user.email || user.username}`) === "true";
+  const isDsaBadgeUnlocked = user && localStorage.getItem(`badge_dsa_badge_${user.email || user.username}`) === "true";
+  const isPythonBadgeUnlocked = user && localStorage.getItem(`badge_python_badge_${user.email || user.username}`) === "true";
+  const isWebDevBadgeUnlocked = user && localStorage.getItem(`badge_webdev_badge_${user.email || user.username}`) === "true";
+  const isCyberBadgeUnlocked = user && localStorage.getItem(`badge_cyber_badge_${user.email || user.username}`) === "true";
+  const isCloudBadgeUnlocked = user && localStorage.getItem(`badge_cloud_badge_${user.email || user.username}`) === "true";
+  const isDbmsBadgeUnlocked = user && localStorage.getItem(`badge_dbms_badge_${user.email || user.username}`) === "true";
 
   // Mock Badges list with dynamic course badges
   const badgesList = [
@@ -372,11 +380,17 @@ export default function StudentDashboard() {
     { name: "⚛️ React Master", desc: "Scored 85%+ on React Quiz Challenge", unlocked: !!isReactBadgeUnlocked, icon: "⚛️" },
     { name: "☕ Java Master", desc: "Scored 85%+ on Java Quiz Challenge", unlocked: !!isJavaBadgeUnlocked, icon: "☕" },
     { name: "🍃 Spring Boot Master", desc: "Scored 85%+ on Spring Boot Quiz Challenge", unlocked: !!isSpringBootBadgeUnlocked, icon: "🍃" },
+    { name: "🤖 AI Master", desc: "Scored 85%+ on AI & ML Quiz Challenge", unlocked: !!isAiBadgeUnlocked, icon: "🤖" },
+    { name: "📊 DSA Master", desc: "Scored 85%+ on DSA Quiz Challenge", unlocked: !!isDsaBadgeUnlocked, icon: "📊" },
+    { name: "🐍 Python Master", desc: "Scored 85%+ on Python Quiz Challenge", unlocked: !!isPythonBadgeUnlocked, icon: "🐍" },
+    { name: "🌐 Web Dev Master", desc: "Scored 85%+ on Web Dev Quiz Challenge", unlocked: !!isWebDevBadgeUnlocked, icon: "🌐" },
+    { name: "🛡️ Cyber Master", desc: "Scored 85%+ on Cyber Security Quiz Challenge", unlocked: !!isCyberBadgeUnlocked, icon: "🛡️" },
+    { name: "☁️ Cloud Master", desc: "Scored 85%+ on Cloud Computing Quiz Challenge", unlocked: !!isCloudBadgeUnlocked, icon: "☁️" },
+    { name: "🗄️ DBMS Master", desc: "Scored 85%+ on DBMS Quiz Challenge", unlocked: !!isDbmsBadgeUnlocked, icon: "🗄️" },
     { name: "🚀 Fast Learner", desc: "Completed a course in 3 days", unlocked: true, icon: "🚀" },
     { name: "🏆 Top Performer", desc: "Ranked Top 5 in leaderboard", unlocked: true, icon: "🏆" },
     { name: "💻 Code Ninja", desc: "Logged over 10 hours of active code study", unlocked: true, icon: "💻" },
     { name: "🧠 AI Conversationalist", desc: "Interacted with SphereAI 10+ times", unlocked: false, icon: "🧠" },
-    { name: "🛡️ Security Specialist", desc: "Completed the Spring Boot security module", unlocked: false, icon: "🛡️" },
     { name: "💎 Elite Coder", desc: "Reached Level 10 or above in learning tracks", unlocked: false, icon: "💎" },
     { name: "🌟 Perfect Quizzer", desc: "Scored 100% on any final track assessment", unlocked: false, icon: "🌟" }
   ];
@@ -388,9 +402,14 @@ export default function StudentDashboard() {
   ];
 
   return (
-    <div className="dashboard-page">
+    <div className={`dashboard-page ${isSidebarOpen ? 'with-sidebar' : ''}`}>
       <Background />
-      <Navbar />
+      <Navbar 
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+        isSidebarOpen={isSidebarOpen} 
+        showSidebarToggle={true} 
+      />
+      <DashboardSidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
       <main className="dashboard-content-wrapper">
         

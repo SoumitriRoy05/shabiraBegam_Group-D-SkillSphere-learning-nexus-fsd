@@ -6,6 +6,10 @@ import { useAuth } from "../context/AuthContext";
 export default function Footer() {
   const { user } = useAuth();
 
+  const handleLinkClick = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <footer className="footer">
 
@@ -24,26 +28,27 @@ export default function Footer() {
 
           {user && user.role === 'STUDENT' ? (
             <>
-              <Link to="/student-home">Home</Link>
-              <Link to="/student-features">Features</Link>
-              <Link to="/learning">Learning</Link>
-              <Link to="/dashboard">Dashboard</Link>
-              <Link to="/sandbox">Sandbox</Link>
+              <Link to="/student-home" onClick={handleLinkClick}>Home</Link>
+              <Link to="/student-features" onClick={handleLinkClick}>Features</Link>
+              <Link to="/learning" onClick={handleLinkClick}>Learning</Link>
+              <Link to="/dashboard" onClick={handleLinkClick}>Dashboard</Link>
+              <Link to="/sandbox" onClick={handleLinkClick}>Sandbox</Link>
+
             </>
           ) : user && user.role === 'EMPLOYEE' ? (
             <>
-              <Link to="/workforce-home">Home</Link>
-              <Link to="/workforce-features">Features</Link>
-              <Link to="/workforce-dashboard">Dashboard</Link>
+              <Link to="/workforce-home" onClick={handleLinkClick}>Home</Link>
+              <Link to="/workforce-features" onClick={handleLinkClick}>Features</Link>
+              <Link to="/workforce-dashboard" onClick={handleLinkClick}>Dashboard</Link>
             </>
           ) : (
             <>
-              <Link to="/">Home</Link>
-              <Link to="/features">Features</Link>
-              <Link to="/learning">Learning</Link>
-              <Link to="/workforce">Workforce</Link>
-              <Link to="/sandbox">Sandbox</Link>
-              <Link to="/contact">Contact</Link>
+              <Link to="/" onClick={handleLinkClick}>Home</Link>
+              <Link to="/features" onClick={handleLinkClick}>Features</Link>
+              <Link to="/learning" onClick={handleLinkClick}>Learning</Link>
+              <Link to="/workforce" onClick={handleLinkClick}>Workforce</Link>
+              <Link to="/sandbox" onClick={handleLinkClick}>Sandbox</Link>
+              <Link to="/contact" onClick={handleLinkClick}>Contact</Link>
             </>
           )}
         </div>

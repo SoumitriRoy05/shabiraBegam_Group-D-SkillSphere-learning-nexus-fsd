@@ -15,6 +15,8 @@ import WorkforceHome from "./pages/WorkforceHome";
 import StudentFeatures from "./pages/StudentFeatures";
 import WorkforceFeatures from "./pages/WorkforceFeatures";
 import SandboxPage from "./pages/SandboxPage";
+import CoursesPage from "./pages/CoursesPage";
+import ComingSoonPage from "./pages/ComingSoonPage";
 import FloatingChatbot from "./components/FloatingChatbot";
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
   return (
     <>
       <Routes>
+
+
         <Route path="/" element={<LandingPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/learning" element={<LearningPage />} />
@@ -42,6 +46,10 @@ function App() {
         <Route path="/student-features" element={<StudentFeatures />} />
         <Route path="/workforce-features" element={<WorkforceFeatures />} />
         <Route path="/sandbox" element={<SandboxPage />} />
+        <Route path="/courses" element={<CoursesPage />} />
+        <Route path="/discussions" element={<ComingSoonPage title="Discussions" />} />
+        <Route path="/resources" element={<ComingSoonPage title="Resources" />} />
+        <Route path="/certificate" element={<ComingSoonPage title="Certificate" />} />
       </Routes>
       {!isDashboardRoute && <FloatingChatbot />}
     </>

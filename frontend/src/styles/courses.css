@@ -1,0 +1,205 @@
+/* Courses Page Layout */
+.courses-page {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 60px;
+  color: #ffffff;
+  font-family: 'Rajdhani', sans-serif;
+  z-index: 5;
+}
+
+.courses-content-wrapper {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 120px 30px 40px 30px;
+  transition: padding-left 0.3s ease;
+}
+
+.courses-page.with-sidebar .courses-content-wrapper {
+  padding-left: 280px;
+}
+
+@media (max-width: 768px) {
+  .courses-page.with-sidebar .courses-content-wrapper {
+    padding-left: 20px;
+  }
+}
+
+.courses-header {
+  margin-bottom: 30px;
+}
+
+.courses-header h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 36px;
+  color: #ffffff;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.courses-header p {
+  color: #94a3b8;
+  font-size: 18px;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+/* Course Card UI */
+.course-card {
+  background-color: #121212;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Inter', sans-serif; /* Cleaner font for cards */
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(243, 156, 18, 0.1);
+}
+
+.course-thumbnail {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.course-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.course-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 15px;
+  line-height: 1.3;
+}
+
+.course-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  font-size: 13px;
+  color: #a0a0a0;
+  flex-wrap: wrap;
+}
+
+.course-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.course-meta-icon {
+  font-size: 14px;
+}
+
+/* Badges */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+}
+
+.badge.premium {
+  background-color: rgba(241, 196, 15, 0.15);
+  color: #f1c40f;
+  border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+.badge.free {
+  background-color: rgba(179, 229, 252, 0.15);
+  color: #b3e5fc;
+  border: 1px solid rgba(179, 229, 252, 0.3);
+}
+
+.badge.enrolled {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  margin-left: auto;
+}
+
+.rating-star {
+  color: #f1c40f;
+}
+
+.course-desc {
+  font-size: 14px;
+  color: #888888;
+  line-height: 1.5;
+  margin-bottom: 25px;
+  flex-grow: 1;
+}
+
+/* Footer / Actions */
+.course-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.enroll-btn {
+  background-color: #f39c12;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background-color 0.2s ease;
+}
+
+.enroll-btn:hover {
+  background-color: #e67e22;
+}
+
+/* Progress Bar */
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 500;
+  align-self: flex-end;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background-color: #2a2a2a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #7a8288; /* Matches the image's greyed-out progress */
+  border-radius: 3px;
+}
