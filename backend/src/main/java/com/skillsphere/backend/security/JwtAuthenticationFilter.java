@@ -2,6 +2,7 @@ package com.skillsphere.backend.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,27 +34,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt)) {
-                if (tokenProvider.validateToken(jwt, false)) {
+                try {
                     Claims claims = tokenProvider.getUserClaimsFromToken(jwt);
-                    String userId = claims.getSubject();
                     String role = (String) claims.get("role");
 
                     SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             claims, null, Collections.singletonList(authority));
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    // Check if token expired to throw custom message
-                    try {
-                        tokenProvider.getUserClaimsFromToken(jwt);
-                        request.setAttribute("invalidToken", "true");
-                    } catch (ExpiredJwtException e) {
-                        request.setAttribute("expired", "Token Expired");
-                    } catch (Exception e) {
-                        request.setAttribute("invalidToken", "true");
-                    }
+
+                } catch (ExpiredJwtException e) {
+                    request.setAttribute("expired", "Token Expired");
+                } catch (JwtException | IllegalArgumentException e) {
+                    request.setAttribute("invalidToken", "true");
                 }
             }
         } catch (Exception ex) {

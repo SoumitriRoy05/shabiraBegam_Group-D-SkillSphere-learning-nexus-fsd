@@ -1,5 +1,6 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 
 import LandingPage from "./pages/LandingPage";
 import FeaturesPage from "./pages/FeaturePage";
@@ -19,6 +20,28 @@ import CoursesPage from "./pages/CoursesPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 import FloatingChatbot from "./components/FloatingChatbot";
 
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        height: '100vh', background: '#05060b', color: '#00e5ff',
+        fontFamily: 'Orbitron, sans-serif', fontSize: '16px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
+
 function App() {
   const location = useLocation();
   const isDashboardRoute = location.pathname === "/dashboard" || location.pathname === "/workforce-dashboard";
@@ -30,8 +53,7 @@ function App() {
   return (
     <>
       <Routes>
-
-
+        {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/learning" element={<LearningPage />} />
@@ -39,17 +61,19 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<StudentDashboard />} />
-        <Route path="/workforce-dashboard" element={<WorkforceDashboard />} />
-        <Route path="/student-home" element={<StudentHome />} />
-        <Route path="/workforce-home" element={<WorkforceHome />} />
-        <Route path="/student-features" element={<StudentFeatures />} />
-        <Route path="/workforce-features" element={<WorkforceFeatures />} />
-        <Route path="/sandbox" element={<SandboxPage />} />
-        <Route path="/courses" element={<CoursesPage />} />
-        <Route path="/discussions" element={<ComingSoonPage title="Discussions" />} />
-        <Route path="/resources" element={<ComingSoonPage title="Resources" />} />
-        <Route path="/certificate" element={<ComingSoonPage title="Certificate" />} />
+
+        {/* Protected routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+        <Route path="/workforce-dashboard" element={<ProtectedRoute><WorkforceDashboard /></ProtectedRoute>} />
+        <Route path="/student-home" element={<ProtectedRoute><StudentHome /></ProtectedRoute>} />
+        <Route path="/workforce-home" element={<ProtectedRoute><WorkforceHome /></ProtectedRoute>} />
+        <Route path="/student-features" element={<ProtectedRoute><StudentFeatures /></ProtectedRoute>} />
+        <Route path="/workforce-features" element={<ProtectedRoute><WorkforceFeatures /></ProtectedRoute>} />
+        <Route path="/sandbox" element={<ProtectedRoute><SandboxPage /></ProtectedRoute>} />
+        <Route path="/courses" element={<ProtectedRoute><CoursesPage /></ProtectedRoute>} />
+        <Route path="/discussions" element={<ProtectedRoute><ComingSoonPage title="Discussions" /></ProtectedRoute>} />
+        <Route path="/resources" element={<ProtectedRoute><ComingSoonPage title="Resources" /></ProtectedRoute>} />
+        <Route path="/certificate" element={<ProtectedRoute><ComingSoonPage title="Certificate" /></ProtectedRoute>} />
       </Routes>
       {!isDashboardRoute && <FloatingChatbot />}
     </>
