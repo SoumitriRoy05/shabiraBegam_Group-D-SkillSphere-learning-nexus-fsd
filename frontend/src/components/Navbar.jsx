@@ -57,6 +57,7 @@ export default function Navbar({ toggleSidebar, isSidebarOpen, showSidebarToggle
             <Link to="/workforce">Workforce</Link>
             <Link to="/sandbox" style={{ color: location.pathname === "/sandbox" ? "#00e5ff" : "" }}>Sandbox</Link>
             <Link to="/contact">Contact</Link>
+            <Link to="/admin-login" style={{ color: location.pathname === "/admin-login" ? "#00e5ff" : "#ffd700", fontWeight: "bold" }}>Admin Portal</Link>
           </>
         )}
       </nav>

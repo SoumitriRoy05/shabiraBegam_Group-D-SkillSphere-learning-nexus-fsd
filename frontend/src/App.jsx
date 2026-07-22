@@ -23,6 +23,18 @@ import ProgressPage from "./pages/ProgressPage";
 import ComingSoonPage from "./pages/ComingSoonPage";
 import FloatingChatbot from "./components/FloatingChatbot";
 
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import { useAdmin } from "./context/AdminContext";
+
+function AdminProtectedRoute({ children }) {
+  const { isAdminAuth } = useAdmin();
+  if (!isAdminAuth) {
+    return <Navigate to="/admin-login" replace />;
+  }
+  return children;
+}
+
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
@@ -65,6 +77,10 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
+        
+        {/* Admin routes */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-dashboard/*" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
 
         {/* Protected routes */}
         {/* /dashboard redirects to student-home */}
