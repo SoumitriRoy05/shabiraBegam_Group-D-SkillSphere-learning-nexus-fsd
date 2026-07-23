@@ -154,7 +154,7 @@
 .sh-panel {
   background: rgba(18, 18, 30, 0.6);
   backdrop-filter: blur(10px);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 24px;
   padding: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
@@ -190,7 +190,7 @@
 
 .sh-feed-card {
   background: rgba(255, 255, 255, 0.02);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -287,7 +287,7 @@
 
 .sh-shortcut-card {
   background: rgba(255, 255, 255, 0.02);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 20px;
   text-align: center;
@@ -332,7 +332,7 @@
 
 .sh-mission-card {
   background: rgba(255, 255, 255, 0.02);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 16px;
   display: flex;

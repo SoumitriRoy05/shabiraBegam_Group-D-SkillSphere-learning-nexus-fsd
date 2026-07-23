@@ -582,7 +582,6 @@
   border-radius: 6px;
   font-size: 13px;
   font-weight: 700;
->>>>>>> Stashed changes
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -632,6 +631,8 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.wf-home-project-header h4 {
   color: #f1f5f9;
 }
 
@@ -653,7 +654,7 @@
 
 .wh-shortcut-card {
   background: rgba(255, 255, 255, 0.02);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 20px;
   text-align: center;
@@ -698,7 +699,7 @@
 
 .wh-queue-card {
   background: rgba(255, 255, 255, 0.02);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 18px;
   display: flex;
@@ -808,7 +809,6 @@
   font-weight: 700;
   color: var(--wf-text-primary);
   margin: 0;
-}
 }
 
 /* ══════════════════════════════════════════
@@ -948,7 +948,6 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-}
 }
 
 .wf-home-btn-reject:hover { background: #ff00c8; color: #fff; }

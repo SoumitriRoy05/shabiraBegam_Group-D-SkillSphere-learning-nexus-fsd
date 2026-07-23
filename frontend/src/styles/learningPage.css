@@ -110,7 +110,7 @@
   max-width: 500px;
   margin: 0 auto 35px auto;
   background: rgba(255, 255, 255, 0.02);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 15px 20px;
   text-align: center;
@@ -149,7 +149,7 @@
 .lp-sidebar-chapters {
   background: rgba(18, 18, 30, 0.75);
   backdrop-filter: blur(10px);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 18px;
   padding: 20px;
   display: flex;
@@ -208,7 +208,7 @@
 .lp-reading-panel {
   background: rgba(18, 18, 30, 0.75);
   backdrop-filter: blur(10px);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 18px;
   padding: 35px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -271,7 +271,7 @@
 
 .lp-tutorial-content pre {
   background: var(--bg-secondary);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 20px;
   overflow-x: auto;
@@ -339,7 +339,7 @@
 
 .lp-quiz-question-card {
   background: rgba(255, 255, 255, 0.02);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 20px;
 }
@@ -479,7 +479,7 @@
 .guest-course-card {
   background: rgba(18, 18, 30, 0.75);
   backdrop-filter: blur(12px);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 30px;
   display: flex;
@@ -566,7 +566,7 @@
 
 .guest-syllabus-box {
   background: rgba(255, 255, 255, 0.03);
-  border: "1px solid var(--border-color)";
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 18px;
   margin-bottom: 25px;
